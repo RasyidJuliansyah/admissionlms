@@ -49,6 +49,18 @@ skripnya benar-benar ada.
 - Bug diperbaiki dengan menulis tes yang gagal dulu.
 - Alur kritis (login, simpan data) punya tes di `tests/e2e/`.
 
+## Deploy
+- Satu deploy sama dengan satu image Docker yang memuat backend dan frontend sekaligus.
+  Frontend dibangun jadi berkas statis di stage terpisah, lalu disalin ke stage backend.
+- Tag image berbentuk `YYYY.MM.DD-<7 karakter commit SHA>`, misalnya `2026.11.10-fd97829`.
+- Jangan deploy memakai tag `latest`. Tag itu berpindah, sehingga jejak versi yang
+  sedang berjalan ikut hilang.
+- Rollback dilakukan dengan menjalankan tag yang lebih lama. Berkas di server tidak
+  pernah ditimpa.
+- Migrasi Prisma tidak ikut kembali saat rollback image. Periksa dampaknya sebelum
+  mengembalikan versi.
+- Alasan lengkapnya ada di `docs/adr/001-deploy-image-tunggal-bertag-versi.md`.
+
 ## Git workflow
 - Branch: `feat/<nama>`, `fix/<nama>`, `chore/<nama>`
 - Commit kecil setelah setiap tugas yang lolos tes. Format: `feat(scope): deskripsi`
