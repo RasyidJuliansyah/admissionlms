@@ -19,7 +19,7 @@
 - Detail arsitektur: lihat `docs/architecture.md`
 
 ## Perintah
-- Install: `_isi (npm install / pnpm install)_`
+- Install: `npm install` (package manager proyek ini npm, jangan pakai pnpm atau yarn)
 - Jalankan dev: `_isi_`
 - Database lokal: `docker compose up -d` lalu `npx prisma migrate dev`
 - Prisma client: `npx prisma generate`
@@ -37,6 +37,9 @@ skripnya benar-benar ada.
   bukan untuk menulis ulang komponen Vuetify.
 - Akses database selalu lewat Prisma client di `src/services/`, tidak langsung dari
   komponen.
+- Primary key tiap tabel memakai auto increment, bukan UUID atau CUID. Di schema Prisma
+  bentuknya `id Int @id @default(autoincrement())`, dan untuk tabel yang barisnya
+  diperkirakan menembus dua miliar pakai `BigInt`.
 - Error ditangani di layer service, bukan di komponen UI.
 
 ## Testing
