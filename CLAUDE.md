@@ -38,8 +38,10 @@ skripnya benar-benar ada.
 - Akses database selalu lewat Prisma client di `src/services/`, tidak langsung dari
   komponen.
 - Primary key tiap tabel memakai auto increment, bukan UUID atau CUID. Di schema Prisma
-  bentuknya `id Int @id @default(autoincrement())`, dan untuk tabel yang barisnya
-  diperkirakan menembus dua miliar pakai `BigInt`.
+  bentuknya `id Int @id @default(autoincrement())`. Pakai `Int` untuk semua tabel.
+- Kolom uang memakai `Decimal` dengan dua angka di belakang koma, karena nominalnya bisa
+  sampai satuan sen. Bentuknya `Decimal @db.Decimal(14, 2)`. Jangan pakai `Float` atau
+  `Double` untuk uang, sebab keduanya menimbulkan galat pembulatan.
 - Error ditangani di layer service, bukan di komponen UI.
 
 ## Testing
