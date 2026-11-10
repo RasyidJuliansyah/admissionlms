@@ -1,0 +1,8 @@
+/*
+ * Tailwind dimuat tanpa preflight supaya reset bawaannya tidak menimpa styling
+ * Vuetify. Yang diambil hanya layer theme dan utilities, sesuai aturan di CLAUDE.md:
+ * Tailwind untuk layout dan spacing, komponen tetap milik Vuetify.
+ */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);

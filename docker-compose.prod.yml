@@ -1,0 +1,21 @@
+# Menjalankan satu versi image tertentu di server.
+#
+# Pemakaian:
+#   IMAGE_TAG=2026.11.10-fd97829 docker compose -f docker-compose.prod.yml up -d
+#
+# Rollback berarti menjalankan perintah yang sama dengan IMAGE_TAG yang lebih lama.
+# Tidak ada berkas di server yang ditimpa. Lihat ADR-001.
+#
+# Jalankan skrip SQL delta lebih dulu sebelum menaikkan versi. Lihat ADR-002.
+
+services:
+  app:
+    image: ${IMAGE_REGISTRY:-admissionlms}:${IMAGE_TAG:?IMAGE_TAG wajib diisi, misalnya 2026.11.10-fd97829}
+    container_name: admissionlms-app
+    restart: unless-stopped
+    environment:
+      PORT: 3001
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL wajib diisi}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET wajib diisi}
+    ports:
+      - "${APP_PORT:-3001}:3001"

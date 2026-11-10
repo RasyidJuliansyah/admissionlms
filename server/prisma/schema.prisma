@@ -1,0 +1,45 @@
+// Skema awal. Modelnya masih contoh dan akan diganti saat domain penerimaan
+// dirancang. Yang penting di sini konvensinya, sesuai CLAUDE.md:
+//   - primary key Int auto increment
+//   - nama tabel dan kolom snake_case lewat @map / @@map
+//   - kolom uang Decimal(14, 2), bukan Float
+//
+// Perubahan skema produksi tidak dijalankan lewat prisma migrate. Tulis skrip SQL
+// delta di server/prisma/deltas/. Lihat ADR-002.
+
+// Connection string ada di prisma.config.ts, bukan di sini. Prisma 7 tidak lagi
+// menerima properti `url` di blok datasource.
+datasource db {
+  provider = "mysql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Applicant {
+  id                 Int       @id @default(autoincrement())
+  registrationNumber String    @unique @map("registration_number")
+  fullName           String    @map("full_name")
+  email              String    @unique
+  phone              String?
+  isActive           Boolean   @default(true) @map("is_active")
+  payments           Payment[]
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  @@map("applicant")
+}
+
+model Payment {
+  id          Int       @id @default(autoincrement())
+  applicantId Int       @map("applicant_id")
+  applicant   Applicant @relation(fields: [applicantId], references: [id])
+  amount      Decimal   @db.Decimal(14, 2)
+  paidAt      DateTime? @map("paid_at")
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@map("payment")
+}

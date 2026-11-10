@@ -1,0 +1,29 @@
+# MySQL untuk development di mesin lokal.
+# Aplikasinya dijalankan lewat `npm run dev`, bukan dari compose ini, supaya hot
+# reload tetap bekerja. Untuk menjalankan image rilis, pakai docker-compose.prod.yml.
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: admissionlms-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: admissionlms
+      MYSQL_USER: admission
+      MYSQL_PASSWORD: admission
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      # 3306 di host sering sudah dipakai MySQL lain, jadi default-nya 3307.
+      # Ganti lewat MYSQL_PORT di .env kalau perlu.
+      - "${MYSQL_PORT:-3307}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mysql-data:

@@ -10,35 +10,41 @@
 ## Tech stack & arsitektur
 - Frontend: Vue 3 + Vuetify, utility class dari Tailwind CSS, Vue Router, Pinia.
   Dibangun dengan Vite jadi SPA statis, tanpa SSR.
-- Backend: Express 4 + TypeScript, ORM Prisma. Modul dipisah per domain ke dalam
+- Backend: Express 5 + TypeScript, Prisma 7. Modul dipisah per domain ke dalam
   `routes/`, `controllers/`, `services/`, dan `middleware/`.
-- Database: MySQL, dijalankan lewat Docker di mesin lokal
-- Struktur folder utama:
-  - `src/components/` komponen UI, dikelompokkan per fitur (`auth/`, `dashboard/`, `shared/`)
-  - `src/services/` akses API, auth, database
-  - `src/utils/` helper murni tanpa side effect
-  - `src/types/` definisi tipe bersama
+- Database: MySQL 8, dijalankan lewat Docker di mesin lokal.
+- Monorepo npm workspaces dengan dua paket:
+  - `client/` frontend Vite. Komponen di `src/components/` per fitur, halaman di
+    `src/pages/`, rute di `src/router/`, store Pinia di `src/stores/`.
+  - `server/` backend Express. Skema dan skrip delta di `server/prisma/`.
+  - `tests/e2e/` menguji keduanya sekaligus, jadi tetap di root.
+- Prisma 7 memakai driver adapter (`@prisma/adapter-mariadb`), bukan engine biner.
+  Connection string ada di `server/prisma.config.ts`, tidak lagi di `schema.prisma`.
 - Detail arsitektur: lihat `docs/architecture.md`
 
 ## Perintah
 - Install: `npm install` (package manager proyek ini npm, jangan pakai pnpm atau yarn)
-- Jalankan dev: `_isi_`
-- Database lokal: `docker compose up -d` lalu `npx prisma db push`
-- Prisma client: `npx prisma generate`
-- Tes: `_isi_`
-- Lint/format: `_isi_`
-
-Perintah yang masih `_isi_` menunggu package.json diisi. Jangan dikarang sebelum
-skripnya benar-benar ada.
+- Jalankan dev: `npm run dev` (client di :5173, server di :3001, `/api` diproxy)
+- Database lokal: `docker compose up -d` lalu `npm run db:push` (MySQL di port 3307,
+  bukan 3306, supaya tidak bentrok dengan MySQL lain di mesin ini)
+- Prisma client: `npm run db:generate`
+- Build: `npm run build`
+- Cek tipe: `npm run typecheck`
+- Bangun image rilis: `./scripts/build-image.sh`
+- Uji image: `./scripts/smoke-test.sh <image>` (wajib dijalankan setelah menaikkan
+  versi Prisma, sebab Dockerfile memangkas sebagian node_modules)
+- Tes: belum ada. Tambahkan perintahnya di sini begitu test runner dipilih.
+- Lint/format: belum ada.
 
 ## Konvensi kode
 - Satu file satu tanggung jawab. File yang sudah ratusan baris dipecah.
 - Penamaan: camelCase untuk fungsi dan variabel, PascalCase untuk komponen Vue,
   snake_case untuk kolom tabel di schema Prisma.
 - Vuetify dipakai untuk komponen. Tailwind hanya untuk penyesuaian layout dan spacing,
-  bukan untuk menulis ulang komponen Vuetify.
-- Akses database selalu lewat Prisma client di `src/services/`, tidak langsung dari
-  komponen.
+  bukan untuk menulis ulang komponen Vuetify. Preflight Tailwind sengaja dimatikan di
+  `client/src/styles/main.css` supaya resetnya tidak menimpa styling Vuetify.
+- Akses database selalu lewat Prisma client di `server/src/services/`, tidak langsung
+  dari route handler maupun komponen.
 - Primary key tiap tabel memakai auto increment, bukan UUID atau CUID. Di schema Prisma
   bentuknya `id Int @id @default(autoincrement())`. Pakai `Int` untuk semua tabel.
 - Kolom uang memakai `Decimal` dengan dua angka di belakang koma, karena nominalnya bisa
