@@ -1,0 +1,1 @@
+// Tipe bersama untuk AdmissionLMS

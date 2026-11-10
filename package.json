@@ -1,0 +1,9 @@
+{
+  "name": "admissionlms",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo \"isi perintah dev\"",
+    "test": "echo \"isi perintah test\""
+  }
+}
