@@ -8,8 +8,10 @@
 - Status: MVP
 
 ## Tech stack & arsitektur
-- Frontend: Vue 3 + Vuetify, utility class dari Tailwind CSS
-- Backend: TypeScript, ORM Prisma
+- Frontend: Vue 3 + Vuetify, utility class dari Tailwind CSS, Vue Router, Pinia.
+  Dibangun dengan Vite jadi SPA statis, tanpa SSR.
+- Backend: Express 4 + TypeScript, ORM Prisma. Modul dipisah per domain ke dalam
+  `routes/`, `controllers/`, `services/`, dan `middleware/`.
 - Database: MySQL, dijalankan lewat Docker di mesin lokal
 - Struktur folder utama:
   - `src/components/` komponen UI, dikelompokkan per fitur (`auth/`, `dashboard/`, `shared/`)
@@ -21,7 +23,7 @@
 ## Perintah
 - Install: `npm install` (package manager proyek ini npm, jangan pakai pnpm atau yarn)
 - Jalankan dev: `_isi_`
-- Database lokal: `docker compose up -d` lalu `npx prisma migrate dev`
+- Database lokal: `docker compose up -d` lalu `npx prisma db push`
 - Prisma client: `npx prisma generate`
 - Tes: `_isi_`
 - Lint/format: `_isi_`
@@ -57,9 +59,23 @@ skripnya benar-benar ada.
   sedang berjalan ikut hilang.
 - Rollback dilakukan dengan menjalankan tag yang lebih lama. Berkas di server tidak
   pernah ditimpa.
-- Migrasi Prisma tidak ikut kembali saat rollback image. Periksa dampaknya sebelum
-  mengembalikan versi.
+- Urutan rilis: jalankan skrip SQL delta dulu, pastikan berhasil, baru jalankan image
+  dengan tag baru.
 - Alasan lengkapnya ada di `docs/adr/001-deploy-image-tunggal-bertag-versi.md`.
+
+## Migrasi database
+- Jangan pernah menjalankan `prisma migrate deploy`, `prisma migrate dev`, atau
+  `prisma db push` ke MySQL produksi.
+- Perubahan skema produksi ditulis sebagai skrip SQL delta idempotent di
+  `server/prisma/deltas/`, dengan nama `YYYYMMDD-<deskripsi>.sql`, lalu dijalankan
+  operator lewat klien basis data.
+- `schema.prisma` tetap diperbarui pada commit yang sama agar Prisma Client sinkron.
+- Tiap delta wajib kompatibel mundur satu rilis. Kolom baru dibuat nullable atau diberi
+  default. Hapus kolom dan ganti nama dipecah jadi dua rilis terpisah.
+- Di mesin lokal pakai `npx prisma db push` ke MySQL Docker. Jangan pakai
+  `prisma migrate dev`, supaya tidak ada folder `migrations/` yang riwayatnya berbeda
+  dari delta produksi.
+- Alasan lengkapnya ada di `docs/adr/002-migrasi-skema-produksi-dengan-skrip-sql-delta.md`.
 
 ## Git workflow
 - Branch: `feat/<nama>`, `fix/<nama>`, `chore/<nama>`

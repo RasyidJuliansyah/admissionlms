@@ -76,8 +76,9 @@ lama, dan cara menjalankan migrasi database. Ketiganya perlu keputusan sendiri.
 - Image lama perlu kebijakan retensi, karena menyimpan semuanya tanpa batas akan
   menghabiskan ruang disk.
 - Migrasi skema Prisma tidak ikut kembali ketika image dikembalikan ke tag lama.
-  Rollback image dengan sendirinya tidak mengembalikan struktur tabel, dan hal ini perlu
-  ditangani pada keputusan tersendiri tentang migrasi.
+  Rollback image dengan sendirinya tidak mengembalikan struktur tabel. Lubang ini
+  ditutup oleh ADR-002, yang mewajibkan tiap perubahan skema kompatibel mundur satu
+  rilis.
 
 ## Alternatives Considered
 
@@ -108,3 +109,4 @@ pemeriksaan ke riwayat git.
 
 - `CLAUDE.md`, bagian Tech stack dan Perintah
 - Keputusan primary key dan tipe kolom uang pada commit `fd97829`
+- `docs/adr/002-migrasi-skema-produksi-dengan-skrip-sql-delta.md`
