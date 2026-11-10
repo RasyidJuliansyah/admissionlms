@@ -5,11 +5,12 @@
 ## Ringkasan
 - Tujuan produk: _isi satu kalimat_
 - Pengguna utama: _isi_
-- Status: MVP / beta / produksi
+- Status: MVP
 
 ## Tech stack & arsitektur
-- Bahasa/framework: _isi (mis. TypeScript + Next.js)_
-- Database: _isi_
+- Frontend: Vue 3 + Vuetify, utility class dari Tailwind CSS
+- Backend: TypeScript, ORM Prisma
+- Database: MySQL, dijalankan lewat Docker di mesin lokal
 - Struktur folder utama:
   - `src/components/` komponen UI, dikelompokkan per fitur (`auth/`, `dashboard/`, `shared/`)
   - `src/services/` akses API, auth, database
@@ -18,14 +19,24 @@
 - Detail arsitektur: lihat `docs/architecture.md`
 
 ## Perintah
-- Install: `_isi_`
+- Install: `_isi (npm install / pnpm install)_`
 - Jalankan dev: `_isi_`
+- Database lokal: `docker compose up -d` lalu `npx prisma migrate dev`
+- Prisma client: `npx prisma generate`
 - Tes: `_isi_`
 - Lint/format: `_isi_`
 
+Perintah yang masih `_isi_` menunggu package.json diisi. Jangan dikarang sebelum
+skripnya benar-benar ada.
+
 ## Konvensi kode
 - Satu file satu tanggung jawab. File yang sudah ratusan baris dipecah.
-- Penamaan: _isi (camelCase untuk fungsi, PascalCase untuk komponen, dst.)_
+- Penamaan: camelCase untuk fungsi dan variabel, PascalCase untuk komponen Vue,
+  snake_case untuk kolom tabel di schema Prisma.
+- Vuetify dipakai untuk komponen. Tailwind hanya untuk penyesuaian layout dan spacing,
+  bukan untuk menulis ulang komponen Vuetify.
+- Akses database selalu lewat Prisma client di `src/services/`, tidak langsung dari
+  komponen.
 - Error ditangani di layer service, bukan di komponen UI.
 
 ## Testing
